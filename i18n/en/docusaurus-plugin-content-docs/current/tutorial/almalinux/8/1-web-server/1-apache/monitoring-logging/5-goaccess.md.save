@@ -1,0 +1,309 @@
+---
+title: GoAccess
+description: How to Install and Configure GoAccess on Apache Web Server AlmaLinux 8
+sidebar_position: 5
+sidebar_label: GoAccess
+---
+
+Monitoring web server traffic in **real-time** is a key requirement in managing production systems. To that end, **GoAccess** offers a lightweight yet highly informative log analysis solution for web servers. In this guide, we will cover in depth, detail, and systematically **how to install and configure GoAccess on an AlmaLinux 8-based Apache Web Server**, enabling accurate and interactive statistical visualizations in real time.
+
+**GoAccess** is an open-source, terminal-based application designed to monitor web server logs directly. Its advantages include:
+
+- Interactive terminal-based display.
+- Supports real-time HTML output.
+- Low resource consumption, ideal for production servers.
+- Supports various log formats: **Apache, Nginx, AWS CloudFront, and others.**
+
+GoAccess is extremely useful for identifying **highest traffic, popular URLs, HTTP statuses, user agents, and even visitor countries**, making it an essential tool for sys admins and devops
+
+## Prerequisite
+
+- Full `root` access
+- Basic Linux Command Line
+- Security
+- Apache/HTTPD installed
+- Domain (optional)
+- Timezone configured
+
+## Install GoAccess
+
+Before installing, it is recommended to update the server and also add the EPEL repository, because GoAccess is not available in the default AlmaLinux repositories:
+```
+dnf update -y
+dnf install epel-release -y
+```
+
+Then run the following command to install GoAccess:
+```
+dnf install goaccess -y
+```
+
+Verify GoAccess installation:
+```
+goaccess --version
+```
+
+Output example:
+```
+GoAccess - 1.8.1.
+For more details visit: https://goaccess.io/
+Copyright (C) 2009-2023 by Gerardo Orellana
+```
+## Virtualhost for GoAccess
+
+:::info
+It is assumed that the GoAccess installation will be applied to each domain or virtualhost.
+:::
+
+Make sure Apache is installed, if it is not installed, please run the following command:
+```
+dnf install httpd -y
+systemctl enable --now httpd
+```
+
+Make sure port 80/443 is allowed when using firewalld, run the following command:
+```
+firewall-cmd --permanent --add-service={http,https}
+firewall-cmd --reload
+```
+
+Then create the following virtualhost or adjust the configuration:
+```
+nano /etc/httpd/conf.d/focusnic.biz.id.conf
+```
+
+Fill in the following parameters:
+```jsx {7,9-16}showLineNumbers title="/etc/httpd/conf.d/focusnic.biz.id.conf"
+<VirtualHost *:80>
+    ServerAdmin webmaster@focusnic.biz.id
+    ServerName focusnic.biz.id
+    ServerAlias www.focusnic.biz.id
+    DocumentRoot /var/www/focusnic.biz.id/public_html
+
+    Alias /web-stats "/var/www/focusnic.biz.id/goaccess"
+
+    <Directory "/var/www/focusnic.biz.id/goaccess">
+        AuthType Basic
+        AuthName "GoAccess Protected"
+        AuthUserFile "/etc/httpd/.htpasswd-focusnic"
+        Require valid-user
+        AllowOverride None
+        DirectoryIndex index.html
+    </Directory>
+
+    ErrorLog /var/log/httpd/focusnic.biz.id-error.log
+    CustomLog /var/log/httpd/focusnic.biz.id-access.log combined
+</VirtualHost>
+```
+
+Create a user and password `admin` to access the GoAccess page:
+```
+htpasswd -c /etc/httpd/.htpasswd admin
+```
+Then create a directory for the virtualhost above:
+```
+mkdir -p /var/www/focusnic.biz.id/public_html
+```
+Then restart Apache after making the changes:
+```
+apachectl configtest
+systemctl restart httpd
+```
+
+## GoAccess Configuration
+
+By default, Apache uses the Combined log format, which looks like this:
+
+:::info
+Make sure your logs are located in `/var/log/httpd/access_log`. If using a VirtualHost, the location may vary.
+:::
+
+```
+LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
+```
+
+Then run GoAccess in terminal mode with the following command:
+```
+goaccess /var/log/httpd/access_log --log-format=COMBINED --real-time-html
+```
+Here is an example of what it looks like
+![](/img/almalinux8-apache-goaccess-term.jpg)<br/>
+
+### Generate Static GoAccess
+
+:::info
+Make sure you have created a virtual host and user authentication according to the guide above.
+:::
+
+Run the following command to create a static GoAccess report and its directory:
+```
+mkdir /var/www/focusnic.biz.id/goaccess
+goaccess /var/log/httpd/focusnic.biz.id-access.log --log-format=COMBINED -o /var/www/focusnic.biz.id/goaccess/index.html
+```
+Here is an example of the output:
+```
+ [PARSING /var/log/httpd/focusnic.biz.id-access.log] {7,280} @ {0/s}@ {0/s}
+Cleaning up resources...
+```
+
+Then access via browser by typing `http://focusnic.biz.id/web-stats` make sure the user and password have been configured.
+![](/img/almalinux8-apache-goaccess-static.jpg)<br/>
+
+Alternatively, you can download the file located at `/var/www/focusnic.biz.id/goaccess/index.html` and run it directly on your computer.
+
+#### GoAccess Report Automation
+
+Assume the storage and log layout is as follows:
+
+- `/var/log/httpd/$DOMAIN-access.log` = access log for domain
+- `/var/www/$DOMAIN/goaccess` = directory to save GoAccess generated results
+
+Create the following script:
+```
+nano /root/goaccess-daily-report.sh
+```
+
+Fill in the following script:
+```jsx showLineNumbers title="/root/goaccess-daily-report.sh"
+#!/bin/bash
+
+# Directory source logs and destination of result GoAccess
+LOG_DIR="/var/log/httpd"
+WEB_DIR="/var/www"
+
+# Find all logs ending -access.log
+for logfile in "$LOG_DIR"/*-access.log; do
+    # Get domain name file log
+    filename=$(basename "$logfile")
+    domain="${filename%-access.log}"
+
+    # /goaccess is target stored logs GoAccess
+    output_dir="$WEB_DIR/$domain/goaccess"
+    output_file="$output_dir/index.html"
+
+    # Create /goaccess if it's not presented
+    mkdir -p "$output_dir"
+
+    # Run GoAccess
+    echo "Processing $domain ..."
+    goaccess "$logfile" \
+        --log-format=COMBINED \
+        --output="$output_file"
+done
+```
+
+Then adjust permissions and run the script:
+```
+chmod +x /root/goaccess-daily-report.sh
+./goaccess-daily-report.sh
+```
+Output example:
+```
+Processing focusnic.biz.id ...
+ [PARSING /var/log/httpd/focusnic.biz.id-access.log] {7,266} @ {0/s}@ {0/s}
+Cleaning up resources...
+```
+
+Add to Cron to run daily at 00:00
+```
+crontab -e
+```
+Fill in the following parameters
+```
+0 0 * * * /root/goaccess-daily-report.sh
+```
+### Real-time GoAccess
+
+:::info
+Make sure you have created a virtual host and user authentication according to the guide above.
+:::
+
+Run the following command to create a GoAccess real-time report:
+```
+mkdir /var/www/focusnic.biz.id/goaccess
+goaccess /var/log/httpd/focusnic.biz.id-access.log --log-format=COMBINED -o /var/www/focusnic.biz.id/goaccess/index.html --real-time-html --daemonize --port=7890 --ws-url=focusnic.biz.id
+```
+
+Open port `7890` for websocket:
+```
+firewall-cmd --permanent --add-port=7890/tcp
+firewall-cmd --reload
+```
+Then access via browser by typing `http://focusnic.biz.id/web-stats` make sure the user and password have been configured.
+
+:::danger
+Because GoAccess WebSockets are unprotected by default, meaning they don't require authentication, we recommend using static reports for greater security. If the websocket port `7890` is publicly accessible:
+1. **Anyone can open a connection to `ws://your-ip:7890`** from a browser or tool like `wscat` and receive your log data.
+2. Sensitive information such as:
+- Visitor IP,
+- Accessed URL,
+- HTTP Status,
+- Referrer,
+- User-Agent
+:::
+
+## Troubleshooting
+
+1. GoAccess Statistics Report Doesn't Appear in Browser <br/>
+
+**Possible Causes:**
+
+- The `/var/www/<domain>/goaccess/` folder hasn't been created.
+- The `index.html` file hasn't been generated (check cron/script syntax).
+- Insufficient permissions (`chmod`, `chown`).
+
+**Solution:**
+
+- Run the script manually to test:
+```
+bash /root/goaccess-daily-report.sh
+```
+- Make sure Apache can read the folder:
+```
+chmod -R 755 /var/www/<domain>/goaccess
+chown -R apache:apache /var/www/<domain>/goaccess
+```
+2. Log is too large, GoAccess is slow or fails <br/>
+
+**Possible causes:**
+
+- The log file is very large (several hundred MB or more).
+- Insufficient server resources (RAM, CPU).
+
+**Solution:**
+
+- Use `logrotate` to make the log daily and lighter.
+
+3. The cron `goaccess-daily-report.sh` is not running
+
+**Possible causes:**
+
+- Cron is disabled or doesn't have executable permissions.
+- The script isn't configured with `chmod +x`.
+
+4. The script doesn't find a new log file after adding a domain <br/>
+
+The log file format doesn't match the `*-access.log` pattern. Make sure the log file name matches `/var/log/httpd/<domain>-access.log`.
+
+5. Error Format Log <br/>
+
+If GoAccess displays a format error, make sure you're using `--log-format=COMBINED` and that your Apache format is actually combined. Check `/etc/httpd/conf/httpd.conf`.
+
+## Conclusion
+
+By using **GoAccess on Apache Web Server on AlmaLinux 8**, we can present visitor statistics in **real-time, efficiently, and visually appealing**. Easy integration with Apache makes it an ideal choice for administrators who need lightweight yet **powerful log monitoring**. Whether on a small or large scale, GoAccess can help us analyze traffic patterns, detect anomalies, and develop better web server optimization strategies.
+
+Q: Does GoAccess support logging systems other than Apache? <br/>
+A: Yes, GoAccess also supports Nginx, Amazon S3, AWS CloudFront, and custom log formats.
+
+Q: Bisakah GoAccess digunakan tanpa output HTML? <br/>
+A: Bisa. GoAccess dapat dijalankan murni dalam mode terminal untuk audit internal atau debugging cepat.
+
+Q: Apakah GoAccess bisa dijalankan pada VPS dengan resource kecil? <br/>
+A: Sangat bisa. GoAccess ringan dan tidak memakan banyak memori atau CPU, sangat cocok untuk server kecil.
+
+Q: Apakah GoAccess menyimpan data statistik? <br/>
+A: Tidak secara default. Jika ingin menyimpan data historis, Anda bisa menggunakan --persist atau integrasi dengan database eksternal.
+
+Q: Apakah bisa menggunakan SSL di GoAccess? <br/>
+A: Ya, Anda cukup menjadikan `/var/www/<domain>/goaccess` bagian dari VirtualHost HTTPS (:443) Anda, dan pastikan sertifikat SSL sudah dipasang.

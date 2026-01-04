@@ -1,0 +1,302 @@
+---
+title: Complete Guide on How to Install Dolibarr using LAMP Stack on AlmaLinux 8
+description: Complete Guide on How to Install Dolibarr using LAMP Stack on AlmaLinux 8
+sidebar_label: Dolibarr
+---
+
+Dalam era digital saat ini, **Dolibarr ERP/CRM** menjadi salah satu solusi perangkat lunak open-source yang banyak digunakan oleh perusahaan kecil hingga menengah untuk mengelola bisnis mereka. Dengan menggabungkan **Enterprise Resource Planning (ERP)** dan **Customer Relationship Management (CRM)** dalam satu platform, Dolibarr memberikan kemudahan dalam manajemen data, keuangan, pelanggan, inventaris, hingga proyek.
+
+Pada panduan ini kita akan membahas secara detail **cara install Dolibarr menggunakan LAMP Stack di AlmaLinux 8**. Panduan ini disusun lengkap mulai dari persiapan server, instalasi setiap komponen, konfigurasi database, hingga tahap akhir menjalankan Dolibarr di web browser.
+
+Apabila Anda ingin mendapatkan hasil yang optimal tanpa repot mengatur instalasi sendiri, jangan ragu untuk menghubungi **Focusnic** sebagai penyedia **jasa install server** maupun **cloud VPS** profesional yang siap membantu kebutuhan Anda.
+
+In today's digital era, **Dolibarr ERP/CRM** has become one of the most widely used open-source software solutions by small to medium-sized companies to manage their businesses. By combining Enterprise Resource Planning (ERP) and Customer Relationship Management (CRM) in one platform, Dolibarr simplifies data, finances, customers, inventory, and projects.
+
+In this guide, we'll cover in detail how to install Dolibarr using the LAMP Stack on AlmaLinux 8. This complete guide covers everything from server preparation, component installation, database configuration, and the final step of running Dolibarr in a web browser.
+
+If you want optimal results without the hassle of managing your own installation, don't hesitate to contact Focusnic, a professional provider of server installation services and cloud VPS solutions ready to assist you with your needs.
+
+## Prerequisite
+
+- Akses full root
+- Domain (opsional)
+- Basic Linux Command Line
+
+## Persiapan
+
+:::danger
+Pastikan firewall dan SELinux telah disesuaikan atau dinonaktifkan sementara jika ingin menghindari kendala saat instalasi awal.
+:::
+
+Sebelum memulai proses instalasi, pastikan bahwa server AlmaLinux 8 telah diperbarui ke versi terbaru. Gunakan perintah berikut untuk memastikan sistem telah menggunakan paket terbaru:
+```
+dnf update -y
+dnf install epel-release -y
+```
+
+### Install Apache
+
+Apache adalah web server yang andal dan digunakan secara luas dalam lingkungan produksi. Untuk menginstalnya, jalankan perintah berikut:
+```
+dnf install httpd -y
+```
+Setelah instalasi selesai, aktifkan dan mulai layanan Apache dengan perintah berikut:
+```
+systemctl enable --now httpd
+```
+Untuk mengizinkan akses ke server melalui HTTP dan HTTPS, izinkan firewall:
+```
+firewall-cmd --permanent --add-service={http,https}
+firewall-cmd --reload
+```
+
+### Install PHP
+
+PHP (Hypertext Preprocessor) merupakan bahasa pemrograman server-side yang sangat penting dalam stack ini. Kita akan menginstal PHP 8 dari Remi Repository agar dapat menggunakan versi terbaru dari PHP.
+
+Jalankan perintah berikut untuk menginstall Remi Repository:
+```
+dnf install -y https://rpms.remirepo.net/enterprise/remi-release-8.rpm
+```
+Kemudian list PHP yang tersedia menggunakan perintah berikut:
+```
+dnf module list php
+```
+Contoh ouput:
+```
+AlmaLinux 8 - AppStream
+Name                            Stream                              Profiles                                              Summary                                         
+php                             7.2 [d]                             common [d], devel, minimal                            PHP scripting language                          
+php                             7.3                                 common [d], devel, minimal                            PHP scripting language                          
+php                             7.4                                 common [d], devel, minimal                            PHP scripting language                          
+php                             8.0                                 common [d], devel, minimal                            PHP scripting language                          
+php                             8.2                                 common [d], devel, minimal                            PHP scripting language                          
+
+Remi's Modular repository for Enterprise Linux 8 - x86_64
+Name                            Stream                              Profiles                                              Summary                                         
+php                             remi-7.2                            common [d], devel, minimal                            PHP scripting language                          
+php                             remi-7.3                            common [d], devel, minimal                            PHP scripting language                          
+php                             remi-7.4                            common [d], devel, minimal                            PHP scripting language                          
+php                             remi-8.0                            common [d], devel, minimal                            PHP scripting language                          
+php                             remi-8.1                            common [d], devel, minimal                            PHP scripting language                          
+php                             remi-8.2                            common [d], devel, minimal                            PHP scripting language                          
+php                             remi-8.3                            common [d], devel, minimal                            PHP scripting language                          
+php                             remi-8.4                            common [d], devel, minimal                            PHP scripting language                          
+
+Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled
+```
+Aktifkan modul PHP versi yang diinginkan. Misalnya, untuk PHP 8.4 jalankan perintah berikut:
+```
+dnf module reset php -y
+dnf module enable php:remi-8.4 -y
+```
+Setelah repositori aktif, kita dapat melanjutkan dengan menginstal PHP beserta modul-modul penting yang umum digunakan:
+```
+dnf install -y php php-cli php-common php-mysqlnd php-fpm php-opcache php-gd php-curl php-mbstring php-xml php-json php-soap php-bcmath php-zip php-intl php-posix php-imap php-ldap
+```
+Periksa versi PHP yang terinstal dengan perintah berikut:
+```
+php -v
+```
+
+### Install MariaDB
+
+MariaDB merupakan pengganti dari MySQL dan kompatibel untuk aplikasi berbasis MySQL. Jalankan perintah berikut untuk menginstalnya:
+```
+dnf module list mariadb
+```
+Contoh output:
+```
+AlmaLinux 8 - AppStream
+Name                                Stream                               Profiles                                               Summary                                   
+mariadb                             10.3 [d]                             client, galera, server [d]                             MariaDB Module                            
+mariadb                             10.5                                 client, galera, server [d]                             MariaDB Module                            
+mariadb                             10.11                                client, galera, server [d]                             MariaDB Module                            
+
+Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled
+```
+Dari output diatas terlihat bahwa tersedia versi default yang tersedia MariaDB yaitu versi 10.11 (terbaru dari bawaan OS). Namun, kita akan menggunakan MariaDB versi 11.4.7 dengan menggunakan repository resmi https://mariadb.org/download/ lalu reset mariadb agar tidak menggunakan default repository dari OS:
+```
+dnf module reset mariadb
+```
+Jalankan perintah berikut untuk menambahkan repository MariaDB versi 11.4.7:
+```
+nano /etc/yum.repos.d/MariaDB.repo
+```
+Tambahkan parameter berikut:
+```
+# MariaDB 11.4 RedHatEnterpriseLinux repository list - created 2025-07-31 14:04 UTC
+# https://mariadb.org/download/
+[mariadb]
+name = MariaDB
+# rpm.mariadb.org is a dynamic mirror if your preferred mirror goes offline. See https://mariadb.org/mirrorbits/ for details.
+# baseurl = https://rpm.mariadb.org/11.4/rhel/$releasever/$basearch
+baseurl = https://mirror.its.dal.ca/mariadb/yum/11.4/rhel/$releasever/$basearch
+module_hotfixes = 1
+# gpgkey = https://rpm.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgkey = https://mirror.its.dal.ca/mariadb/yum/RPM-GPG-KEY-MariaDB
+gpgcheck = 1
+```
+Lalu jalankan perintah berikut untuk menginstall MariaDB:
+```
+dnf install MariaDB-server MariaDB-client
+```
+Enable dan aktifkan service MariaDB:
+```
+systemctl enable --now mariadb
+systemctl status mariadb
+```
+Sebelum digunakan untuk produksi atau testing, sebaiknya amankan terlebih dahulu instalasi MariaDB dengan menjalankan perintah berikut:
+```
+mariadb-secure-installation
+```
+Kemudian ikuti petunjuk yang muncul:
+
+- Enter current password for root (enter for none) → **[ENTER]**
+- Switch to unix_socket authentication → **Y**
+- Change the root password? → **Y**
+- Remove anonymous users? → **Y**
+- Disallow root login remotely? **Y**
+- Remove test database and access to it? **Y**
+- Reload privilege tables now? **Y**
+
+## Install Dolibarr
+
+Sebelum menginstall Dolibarr, kita akan membuat virtualhost dan database (untuk menyimpan konten, konfigurasi, dan struktur Dolibarr) terlebih dahulu. Jalankan perintah berikut untuk membuat virtualhost:
+:::info
+Pastikan menggunakan domain yang valid (FQDN) dan juga DNS A record sudah di arahkan atau di pointing sesuai dengan IP server yang digunakan pada server.
+:::
+
+```
+nano /etc/httpd/conf.d/focusnic.biz.id.conf
+```
+
+Isi parameter berikut:
+```jsx showLineNumbers title="/etc/httpd/conf.d/focusnic.biz.id.conf"
+<VirtualHost *:80>
+    ServerAdmin webmaster@focusnic.biz.id
+    ServerName focusnic.biz.id
+    ServerAlias www.focusnic.biz.id
+    DocumentRoot /var/www/focusnic.biz.id/public_html
+
+    <Directory /var/www/focusnic.biz.id>
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog /var/log/httpd/focusnic.biz.id-error.log
+    CustomLog /var/log/httpd/focusnic.biz.id-access.log combined
+</VirtualHost>
+```
+
+Lalu buat direktori pada virtualhost diatas:
+```
+mkdir -p /var/www/focusnic.biz.id/public_html
+```
+
+Restart Apache untuk menyimpan perubahan:
+```
+apachectl configtest
+systemctl restart httpd
+```
+
+Ubah konfigurasi `php.ini` dengan perintah berikut:
+```
+nano /etc/php.ini
+```
+Sesuikan dengan parameter berikut:
+```jsx showLineNumbers title="/etc/php.ini"
+max_execution_time = 180
+max_input_time = 180
+memory_limit = 256M
+post_max_size = 50M
+upload_max_filesize = 50M
+```
+Lalu restart `php-fpm` untuk menyimpan perubahan dengan perintah berikut:
+```
+systemctl restart php-fpm
+```
+Buat database dengan menjalankan perintah berikut:
+```
+mariadb
+```
+
+Lalu jalankan perintah berikut untuk membuat database, user, dan password:
+```
+create database dolibarr_db;
+create user 'dolibarr_user'@'localhost' identified by 'yjLmBXOWDcOZFHh4';
+grant all on dolibarr_db.* to 'dolibarr_user'@'localhost';
+flush privileges;
+quit;
+```
+
+Download file Dolibarr dan letakkan pada direktori sesuai virtualhost:
+```
+cd /var/www/focusnic.biz.id/public_html
+wget https://github.com/Dolibarr/dolibarr/archive/refs/tags/21.0.3.zip
+unzip 21.0.3.zip
+mv dolibarr-21.0.3/htdocs/* /var/www/focusnic.biz.id/public_html
+mv dolibarr-21.0.3/scripts /var/www/focusnic.biz.id
+```
+Sesuaikan permission:
+```
+find /var/www/focusnic.biz.id/public_html -type f -exec chmod 644 {} \;
+find /var/www/focusnic.biz.id/public_html -type d -exec chmod 755 {} \;
+chown -R apache:apache /var/www/focusnic.biz.id
+```
+
+Silahkan akses instalasi Dolibarr pada browser dengan mengetik nama domain atau IP
+![](/img/almalinux8-lamp-apps-dolibarr1.png) <br/>
+Dolibarr akan melakukan system checking sebelum melanjutkan instalasi, pastikan sudah terpenuhi
+![](/img/almalinux8-lamp-apps-dolibarr2.png) <br/>
+Kemudian setup direktori instalasi Dolibarr, URL, dan juga database
+![](/img/almalinux8-lamp-apps-dolibarr3.png) <br/>
+Install Dolibarr
+![](/img/almalinux8-lamp-apps-dolibarr4.png) <br/>
+Buat user admin untuk Dolibarr
+![](/img/almalinux8-lamp-apps-dolibarr5.png) <br/>
+Akses halaman admin Dolibarr melalui `http://$DOMAIN/admin/`
+![](/img/almalinux8-lamp-apps-dolibarr6.png) <br/>
+
+## Troubleshooting
+
+1. Halaman Dolibarr Blank atau Error 500 <br/>
+
+Modul PHP belum lengkap atau permission file salah. Pastikan semua ekstensi PHP seperti `php-mysqlnd`, `php-mbstring`, `php-xml`, dan `php-intl` sudah terinstal. Lalu jalankan perintah berikut untuk menyesuaikan permission:
+```
+find /var/www/focusnic.biz.id/public_html -type f -exec chmod 644 {} \;
+find /var/www/focusnic.biz.id/public_html -type d -exec chmod 755 {} \;
+chown -R apache:apache /var/www/focusnic.biz.id
+```
+
+2. Koneksi Database Gagal <br/>
+
+Username, password, atau nama database salah. Lalu berikan privileges yang sesuai
+```
+mariadb
+grant all on dolibarr_db.* to 'dolibarr_user'@'localhost';
+```
+Login ke database untuk ujicoba user yang sudah dibuat:
+```
+mariadb -u dolibarr_user -p
+```
+
+## Kesimpulan
+
+Melalui panduan ini, kita telah berhasil membahas secara detail **cara install Dolibarr menggunakan LAMP Stack di AlmaLinux 8**. Dimulai dari persiapan server, instalasi Apache, MariaDB, PHP, hingga konfigurasi Dolibarr melalui web interface. Dengan langkah yang benar, Dolibarr dapat menjadi solusi ERP/CRM yang efisien, hemat biaya, dan fleksibel untuk bisnis Anda. Namun, pengelolaan server memerlukan perhatian khusus dalam hal keamanan, optimasi performa, dan pemeliharaan jangka panjang.
+
+Jika Anda menginginkan instalasi tanpa ribet serta dukungan penuh dalam manajemen server bisnis, **Focusnic** hadir sebagai partner andalan yang menyediakan **jasa install server** serta layanan **cloud VPS** profesional.
+
+Q: Apakah Dolibarr gratis digunakan? <br/>
+A: Ya, Dolibarr adalah aplikasi open-source dan gratis digunakan. Anda hanya perlu menyiapkan server untuk menjalankannya.
+
+Q: Apa perbedaan MariaDB dengan MySQL dalam instalasi Dolibarr? <br/>
+A: MariaDB adalah fork dari MySQL yang kompatibel dan lebih sering digunakan pada server modern. Dolibarr mendukung keduanya, namun pada AlmaLinux 8 lebih disarankan menggunakan MariaDB.
+
+Q: Apakah Dolibarr bisa dijalankan dengan HTTPS/SSL? <br/>
+A: Ya, Dolibarr sangat disarankan dijalankan dengan HTTPS. Anda bisa menggunakan Let’s Encrypt untuk sertifikat SSL gratis.
+
+Referensi Lanjutan:
+- SSL dan Keamanan: https://docs.focusnic.com/tutorial/almalinux/8/web-server/apache/security
+- Virtualhost: https://docs.focusnic.com/tutorial/almalinux/8/web-server/apache/virtual-host
+- WAF ModSecurity: https://docs.focusnic.com/tutorial/almalinux/8/web-server/apache/modsecurity

@@ -1,0 +1,82 @@
+{
+  "logo.alt": {
+    "message": "Focusnic",
+    "description": "The alt text of navbar logo"
+  },
+  "item.label.Tutorial": {
+    "message": "Tutorial",
+    "description": "Navbar item with label Tutorial"
+  },
+  "item.label.Manage Server": {
+    "message": "Manage Server",
+    "description": "Navbar item with label Manage Server"
+  },
+  "item.label.Cloud VPS": {
+    "message": "Cloud VPS",
+    "description": "Navbar item with label Cloud VPS"
+  },
+  "item.label.Cloud VPS Windows": {
+    "message": "Cloud VPS Windows",
+    "description": "Navbar item with label Cloud VPS Windows"
+  },
+  "item.label.Blog": {
+    "message": "Blog",
+    "description": "Navbar item with label Blog"
+  },
+  "item.label.cPanel/WHM": {
+    "message": "cPanel/WHM",
+    "description": "Navbar item with label cPanel/WHM"
+  },
+  "item.label.Plesk": {
+    "message": "Plesk",
+    "description": "Navbar item with label Plesk"
+  },
+  "item.label.WHMCS": {
+    "message": "WHMCS",
+    "description": "Navbar item with label WHMCS"
+  },
+  "item.label.Open Source Panel": {
+    "message": "Open Source Panel",
+    "description": "Navbar item with label Open Source Panel"
+  },
+  "item.label.VPS SSD": {
+    "message": "VPS SSD",
+    "description": "Navbar item with label VPS SSD"
+  },
+  "item.label.VPS NVMe": {
+    "message": "VPS NVMe",
+    "description": "Navbar item with label VPS NVMe"
+  },
+  "item.label.VPS Intel": {
+    "message": "VPS Intel",
+    "description": "Navbar item with label VPS Intel"
+  },
+  "item.label.VPS AMD": {
+    "message": "VPS AMD",
+    "description": "Navbar item with label VPS AMD"
+  },
+  "item.label.General Purpose": {
+    "message": "General Purpose",
+    "description": "Navbar item with label General Purpose"
+  },
+  "item.label.CPU Optimized": {
+    "message": "CPU Optimized",
+    "description": "Navbar item with label CPU Optimized"
+  },
+  "item.label.Memory Optimized": {
+    "message": "Memory Optimized",
+    "description": "Navbar item with label Memory Optimized"
+  },
+  "item.label.Storage Optimized": {
+    "message": "Storage Optimized",
+    "description": "Navbar item with label Storage Optimized"
+  },
+  "item.label.VPS Windows SSD": {
+    "message": "VPS Windows SSD",
+    "description": "Navbar item with label VPS Windows SSD"
+  },
+  "item.label.VPS Windows NVMe": {
+    "message": "VPS Windows NVMe",
+    "description": "Navbar item with label VPS Windows NVMe"
+  }
+}

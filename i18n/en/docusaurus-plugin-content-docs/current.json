@@ -1,0 +1,22 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.tutorialSidebar.category.Tutorial": {
+    "message": "Tutorial",
+    "description": "The label for category Tutorial in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Tutorial.link.generated-index.description": {
+    "message": "Tutorial dan Dokumentasi Konfigurasi Linux",
+    "description": "The generated-index page description for category Tutorial in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.AlmaLinux": {
+    "message": "AlmaLinux",
+    "description": "The label for category AlmaLinux in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.8": {
+    "message": "8",
+    "description": "The label for category 8 in sidebar tutorialSidebar"
+  }
+}

@@ -1,0 +1,3 @@
+User-agent: *
+Sitemap: https://docs.focusnic.com/sitemap.xml
+Sitemap: https://docs.focusnic.com/en/sitemap.xml
