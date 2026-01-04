@@ -8,6 +8,7 @@ sidebar_position: 1
 Temukan panduan teknis untuk membantu Anda dalam mengelola server linux. Artikel atau catatan pada website ini di tulis oleh System Administrator Focusnic.
 Artikel pada website ini mungkin akan berguna untuk mengelola server linux Anda.
 
+Test
 :::info
 Focusnic menyediakan layanan manage server dan juga Cloud VPS. Walaupun kami memiliki layanan Cloud VPS namun fokus utama kami adalah administrasi teknis pada sisi server. 
 Artikel yang kami tulis akan langsung <i>to the point</i> jadi, kami berharap Anda sudah memiliki kemampuan atau skill administrasi Linux.
