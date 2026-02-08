@@ -1,6 +1,6 @@
 ---
 title: Home
-description: Selamat Datang di Dokumentasi dan Konfigurasi Server Linux
+description: Selamat Datang di Dokumentasi dan Konfigurasi Server Linuxs
 sidebar_position: 1
 ---
 
