@@ -11,30 +11,30 @@ Firewalld zone menentukan tingkat kepercayaan koneksi jaringan berdasarkan inter
 
 | Zone | Deskripsi | Default Policy | Kapan Digunakan |
 | --- | --- | --- | --- |
-| 🔒 `block` | Semua koneksi **masuk diblokir**, **kecuali** koneksi keluar. | **DROP** | Untuk interface yang sangat tidak dipercaya. |
-| 🛑 `drop` | Semua koneksi **masuk dibuang tanpa pemberitahuan**. | **DROP** | Keamanan maksimum, stealth mode (tidak terlihat oleh penyerang). |
-| 🧱 `dmz` (Demilitarized Zone) | Untuk server di DMZ; hanya service tertentu yang diizinkan. | **DROP** | Jika host ada di semi-public network, misalnya web/mail server. |
-| 🌐 `external` | Untuk interface yang menghadap ke publik. Biasanya digunakan dengan NAT. | **DROP** | Server gateway atau router yang meneruskan koneksi ke LAN. |
-| 🏠 `home` | Untuk jaringan yang dipercaya sebagian besar (rumah, Wi-Fi pribadi). | **ACCEPT** | PC/laptop pribadi di jaringan rumah. |
-| 🏢 `internal` | Jaringan internal perusahaan/organisasi. | **ACCEPT** | Server atau workstation di LAN lokal yang dipercaya. |
-| 🔁 `nm-shared` | Digunakan oleh **NetworkManager** untuk koneksi yang di-*share* antar perangkat. | **ACCEPT** | Jika koneksi dibagikan via hotspot/tethering dari host. |
-| 🌎 `public` (Default) | Asumsinya adalah jaringan **tidak dipercaya**. | **DROP** | Untuk semua koneksi umum/internet (default pada banyak sistem). |
-| ✅ `trusted` | **Semua koneksi diizinkan** tanpa filter. | **ACCEPT SEMUA** | Gunakan hanya untuk interface yang benar-benar aman. |
-| 🧑‍💻 `work` | Jaringan kerja yang terpercaya, lebih ketat dari trusted. | **ACCEPT** | Laptop/PC kantor di LAN perusahaan. |
+| `block` | Semua koneksi **masuk diblokir**, **kecuali** koneksi keluar. | **DROP** | Untuk interface yang sangat tidak dipercaya. |
+| `drop` | Semua koneksi **masuk dibuang tanpa pemberitahuan**. | **DROP** | Keamanan maksimum, stealth mode (tidak terlihat oleh penyerang). |
+| `dmz` (Demilitarized Zone) | Untuk server di DMZ; hanya service tertentu yang diizinkan. | **DROP** | Jika host ada di semi-public network, misalnya web/mail server. |
+| `external` | Untuk interface yang menghadap ke publik. Biasanya digunakan dengan NAT. | **DROP** | Server gateway atau router yang meneruskan koneksi ke LAN. |
+| `home` | Untuk jaringan yang dipercaya sebagian besar (rumah, Wi-Fi pribadi). | **ACCEPT** | PC/laptop pribadi di jaringan rumah. |
+| `internal` | Jaringan internal perusahaan/organisasi. | **ACCEPT** | Server atau workstation di LAN lokal yang dipercaya. |
+| `nm-shared` | Digunakan oleh **NetworkManager** untuk koneksi yang di-*share* antar perangkat. | **ACCEPT** | Jika koneksi dibagikan via hotspot/tethering dari host. |
+| `public` (Default) | Asumsinya adalah jaringan **tidak dipercaya**. | **DROP** | Untuk semua koneksi umum/internet (default pada banyak sistem). |
+| `trusted` | **Semua koneksi diizinkan** tanpa filter. | **ACCEPT SEMUA** | Gunakan hanya untuk interface yang benar-benar aman. |
+| `work` | Jaringan kerja yang terpercaya, lebih ketat dari trusted. | **ACCEPT** | Laptop/PC kantor di LAN perusahaan. |
 
 Contoh penggunaan zone firewalld
 | Zona | Kepercayaan | Akses Masuk | Contoh Penggunaan |
 | --- | --- | --- | --- |
-| `trusted` | 🔓 Sangat tinggi | Semua diizinkan | Jaringan pribadi terisolasi |
-| `home` | 👍 Tinggi | Default + sharing | Wi-Fi rumah |
-| `work` | 👍 Tinggi | Default + ssh/samba | LAN kantor |
-| `internal` | 👍 Tinggi | Akses layanan terbatas | VLAN internal, backend server |
-| `public` | ⚠️ Rendah | Hanya yang diizinkan | Internet/public LAN |
-| `dmz` | ⚠️ Rendah | Service tertentu saja | Server DMZ (web/mail) |
-| `external` | ⚠️ Rendah | NAT routing, terbatas | Router/gateway NAT |
-| `block` | ❌ Tidak dipercaya | Drop semua koneksi | Koneksi dari sumber berisiko |
-| `drop` | ❌ Tidak dipercaya | Silent drop (stealth) | Server yang tidak ingin terdeteksi |
-| `nm-shared` | 🔄 Spesial | Dikonfigurasi otomatis | NetworkManager shared connection |
+| `trusted` | Sangat tinggi | Semua diizinkan | Jaringan pribadi terisolasi |
+| `home` | Tinggi | Default + sharing | Wi-Fi rumah |
+| `work` | Tinggi | Default + ssh/samba | LAN kantor |
+| `internal` | Tinggi | Akses layanan terbatas | VLAN internal, backend server |
+| `public` | Rendah | Hanya yang diizinkan | Internet/public LAN |
+| `dmz` | Rendah | Service tertentu saja | Server DMZ (web/mail) |
+| `external` | Rendah | NAT routing, terbatas | Router/gateway NAT |
+| `block` | Tidak dipercaya | Drop semua koneksi | Koneksi dari sumber berisiko |
+| `drop` | Tidak dipercaya | Silent drop (stealth) | Server yang tidak ingin terdeteksi |
+| `nm-shared` | Spesial | Dikonfigurasi otomatis | NetworkManager shared connection |
 
 Firewalld menggunakan nama layanan yang telah didefinisikan (misalnya: `ssh`, `http`, `https`) untuk membuka port. Berikut adalah list default service dari firewalld:
 ```
