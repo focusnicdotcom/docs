@@ -1,8 +1,8 @@
 ---
-title: How to Install AlmaLinux 8 OS
-description: Tutorial on How to Install AlmaLinux 8 OS
+title: How to Install AlmaLinux OS
+description: Tutorial on How to Install AlmaLinux OS
 sidebar_position: 1
-sidebar_label: How to Install AlmaLinux 8 OS
+sidebar_label: How to Install AlmaLinux OS
 ---
 
 ## Download OS AlmaLinux 8

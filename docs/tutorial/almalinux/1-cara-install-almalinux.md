@@ -1,8 +1,8 @@
 ---
-title: Cara Install OS AlmaLinux 8
-description: Tutorial Cara Install OS AlmaLinux 8
+title: Cara Install OS AlmaLinux
+description: Tutorial Cara Install OS AlmaLinux
 sidebar_position: 1
-sidebar_label: Cara Install OS AlmaLinux 8
+sidebar_label: Cara Install OS AlmaLinux
 ---
 
 ## Download OS AlmaLinux 8

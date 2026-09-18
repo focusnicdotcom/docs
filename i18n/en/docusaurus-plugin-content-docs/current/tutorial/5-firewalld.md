@@ -12,30 +12,30 @@ Firewall zones determine the trust level of network connections based on the int
 
 | Zone | Description | Default Policy | When to Use |
 | --- | --- | --- | --- |
-| 🔒 `block` | All **inbound connections are blocked**, **except** outbound connections. | **DROP** | For highly untrusted interfaces. |
-| 🛑 `drop` | All incoming connections are discarded without notice**. | **DROP** | Maximum security, stealth mode (invisible to attackers). |
-| 🧱 `dmz` (Demilitarized Zone) | For servers in the DMZ; only certain services are allowed. | **DROP** | If the host is on a semi-public network, such as a web/mail server. |
-| 🌐 `external` | For public-facing interfaces. Usually used with NAT. | **DROP** | A gateway server or router that forwards connections to the LAN. |
-| 🏠 `home` | For most trusted networks (home, private Wi-Fi). | **ACCEPT** | Personal PC/laptop on home network. |
-| 🏢 `internal` | Internal company/organization network. | **ACCEPT** | Servers or workstations on a trusted local LAN. |
-| 🔁 `nm-shared` | Used by **NetworkManager** for connections that are *shared* between devices. | **ACCEPT** | If the connection is shared via hotspot/tethering from the host. |
-| 🌎 `public` (Default) | The assumption is that the network is **not trusted**. | **DROP** | For all public/internet connections (default on many systems). |
-| ✅ `trusted` | **All connections are allowed** without filters. | **ACCEPT ALL** | Use only for truly secure interfaces. |
-| 🧑‍💻 `work` || A trusted work network, stricter than trusted. | **ACCEPT** | Office laptops/PCs on the company LAN. |
+| `block` | All **inbound connections are blocked**, **except** outbound connections. | **DROP** | For highly untrusted interfaces. |
+| `drop` | All incoming connections are discarded without notice**. | **DROP** | Maximum security, stealth mode (invisible to attackers). |
+| `dmz` (Demilitarized Zone) | For servers in the DMZ; only certain services are allowed. | **DROP** | If the host is on a semi-public network, such as a web/mail server. |
+| `external` | For public-facing interfaces. Usually used with NAT. | **DROP** | A gateway server or router that forwards connections to the LAN. |
+| `home` | For most trusted networks (home, private Wi-Fi). | **ACCEPT** | Personal PC/laptop on home network. |
+| `internal` | Internal company/organization network. | **ACCEPT** | Servers or workstations on a trusted local LAN. |
+| `nm-shared` | Used by **NetworkManager** for connections that are *shared* between devices. | **ACCEPT** | If the connection is shared via hotspot/tethering from the host. |
+| `public` (Default) | The assumption is that the network is **not trusted**. | **DROP** | For all public/internet connections (default on many systems). |
+| `trusted` | **All connections are allowed** without filters. | **ACCEPT ALL** | Use only for truly secure interfaces. |
+| `work` || A trusted work network, stricter than trusted. | **ACCEPT** | Office laptops/PCs on the company LAN. |
 
 Example of using zone firewalld
 | Zones | Trust | Entry Access | Usage Examples |
 | --- | --- | --- | --- |
-| `trusted` | 🔓 Very high | All permitted | Isolated private network |
-| `home` | 👍 High | Default + sharing | Home Wi-Fi |
-| `work` | 👍 High | Default + ssh/samba | Office LAN |
-| `internal` | 👍 High | Limited service access | Internal VLAN, backend server |
-| `public` | ⚠️  Low | Only authorized | Internet/public LAN |
-| `dmz` | ⚠️  Low | Specific services only | DMZ servers (web/mail) |
-| `external` | ⚠️  Low | NAT routing, limited | NAT router/gateway  |
-| `block` | ❌ Untrusted | Drop all connections | Connections from risky sources |
-| `drop` | ❌ Untrusted | Silent drop (stealth) | Servers that don't want to be detected |
-| `nm-shared` | 🔄 Special | Auto-configured | NetworkManager shared connection |
+| `trusted` | Very high | All permitted | Isolated private network |
+| `home` | High | Default + sharing | Home Wi-Fi |
+| `work` | High | Default + ssh/samba | Office LAN |
+| `internal` | High | Limited service access | Internal VLAN, backend server |
+| `public` | Low | Only authorized | Internet/public LAN |
+| `dmz` | Low | Specific services only | DMZ servers (web/mail) |
+| `external` | Low | NAT routing, limited | NAT router/gateway  |
+| `block` | Untrusted | Drop all connections | Connections from risky sources |
+| `drop` | Untrusted | Silent drop (stealth) | Servers that don't want to be detected |
+| `nm-shared` | Special | Auto-configured | NetworkManager shared connection |
 
 Firewalld uses predefined service names (for example: `ssh`, `http`, `https`) to open ports. Here is the list of default services from firewalld:
 ```
@@ -198,11 +198,11 @@ when the server or host has multiple interfaces, subnets, or as a network gatewa
 Use case
 | Use Case | Zone Name | Function |
 | --- | --- | --- |
-| 🔌 Server with 2 NICs (1 to internet, 1 to LAN) | `lan` and `wan` | `wan` only open 80/443, `lan` can access 22 and DB |
-| 🌐 Web server that is also a VPN endpoint | `vpn` and `public` | `vpn` can access everything, `public` only 80/443 |
-| 🧪 KVM Lab / Docker host | `lab-internal`, `external` | Only certain IPs in `lab-internal` can SSH to host |
-| 🏢 Offices with different VLANs | `hr-zone`, `it-zone`, `guest-zone` | Each zone has different access (e.g. `hr-zone` can go to payroll, `guest-zone` can't) |
-| 📦 Isolate critical services | `db-zone`, `web-zone` | `db-zone` only accepts from `web-zone`, not public |
+| Server with 2 NICs (1 to internet, 1 to LAN) | `lan` and `wan` | `wan` only open 80/443, `lan` can access 22 and DB |
+| Web server that is also a VPN endpoint | `vpn` and `public` | `vpn` can access everything, `public` only 80/443 |
+| KVM Lab / Docker host | `lab-internal`, `external` | Only certain IPs in `lab-internal` can SSH to host |
+| Offices with different VLANs | `hr-zone`, `it-zone`, `guest-zone` | Each zone has different access (e.g. `hr-zone` can go to payroll, `guest-zone` can't) |
+| Isolate critical services | `db-zone`, `web-zone` | `db-zone` only accepts from `web-zone`, not public |
 
 Create a new zone:
 ```
