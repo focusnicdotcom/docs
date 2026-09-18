@@ -4,7 +4,7 @@ description: Pengertian dan Tutorial Konfigurasi Firewalld di Linux
 sidebar_position: 104
 sidebar_label: firewalld
 ---
-Firewalld adalah frontend manajemen firewall berbasis iptables/nftables, yang menyediakan kontrol akses jaringan secara dinamis (tanpa restart layanan) menggunakan zone dan service. Firewalld menggantikan cara lama mengelola firewall secara manual menggunakan iptables.
+**Firewalld** adalah frontend manajemen firewall berbasis iptables/nftables, yang menyediakan kontrol akses jaringan secara dinamis (tanpa restart layanan) menggunakan zone dan service. Firewalld menggantikan cara lama mengelola firewall secara manual menggunakan iptables.
 
 ## Konsep Firewalld
 Firewalld zone menentukan tingkat kepercayaan koneksi jaringan berdasarkan interface.
