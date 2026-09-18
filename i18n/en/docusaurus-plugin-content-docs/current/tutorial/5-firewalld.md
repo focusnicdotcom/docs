@@ -4,7 +4,7 @@ description: Tutorial Firewalld on Linux
 sidebar_position: 104
 sidebar_label: firewalld
 ---
-Firewalld is an iptables/nftables-based firewall management frontend, which provides dynamic network access control (without service restart) using zones and services
+**Firewalld** is an iptables/nftables-based firewall management frontend, which provides dynamic network access control (without service restart) using zones and services
 . Firewalld replaces the old way of manually managing firewalls using iptables.
 
 ## Firewalld Concept
