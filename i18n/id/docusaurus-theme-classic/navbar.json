@@ -1,0 +1,38 @@
+{
+  "logo.alt": {
+    "message": "Focusnic",
+    "description": "The alt text of navbar logo"
+  },
+  "item.label.Tutorial": {
+    "message": "Tutorial",
+    "description": "Navbar item with label Tutorial"
+  },
+  "item.label.Managed Services": {
+    "message": "Managed Services",
+    "description": "Navbar item with label Managed Services"
+  },
+  "item.label.VPS": {
+    "message": "VPS",
+    "description": "Navbar item with label VPS"
+  },
+  "item.label.Blog": {
+    "message": "Blog",
+    "description": "Navbar item with label Blog"
+  },
+  "item.label.cPanel/WHM": {
+    "message": "cPanel/WHM",
+    "description": "Navbar item with label cPanel/WHM"
+  },
+  "item.label.Plesk": {
+    "message": "Plesk",
+    "description": "Navbar item with label Plesk"
+  },
+  "item.label.WHMCS": {
+    "message": "WHMCS",
+    "description": "Navbar item with label WHMCS"
+  },
+  "item.label.Open Source Panel": {
+    "message": "Open Source Panel",
+    "description": "Navbar item with label Open Source Panel"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.tutorialSidebar.category.Tutorial": {
+    "message": "Tutorial",
+    "description": "The label for category 'Tutorial' in sidebar 'tutorialSidebar'"
+  },
+  "sidebar.tutorialSidebar.category.Tutorial.link.generated-index.description": {
+    "message": "Tutorial dan Dokumentasi Konfigurasi Linux",
+    "description": "The generated-index page description for category 'Tutorial' in sidebar 'tutorialSidebar'"
+  },
+  "sidebar.tutorialSidebar.category.AlmaLinux": {
+    "message": "AlmaLinux",
+    "description": "The label for category 'AlmaLinux' in sidebar 'tutorialSidebar'"
+  },
+  "sidebar.tutorialSidebar.category.Web Server": {
+    "message": "Web Server",
+    "description": "The label for category 'Web Server' in sidebar 'tutorialSidebar'"
+  },
+  "sidebar.tutorialSidebar.category.Apache": {
+    "message": "Apache",
+    "description": "The label for category 'Apache' in sidebar 'tutorialSidebar'"
+  },
+  "sidebar.tutorialSidebar.category.Monitoring/Logging": {
+    "message": "Monitoring/Logging",
+    "description": "The label for category 'Monitoring/Logging' in sidebar 'tutorialSidebar'"
+  },
+  "sidebar.tutorialSidebar.category.Apps": {
+    "message": "Apps",
+    "description": "The label for category 'Apps' in sidebar 'tutorialSidebar'"
+  }
+}
